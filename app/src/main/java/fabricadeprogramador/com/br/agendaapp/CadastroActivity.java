@@ -15,6 +15,8 @@ public class CadastroActivity extends AppCompatActivity {
     @BindView(R.id.ed_cadastro_nome)
     EditText edNome;
 
+    Usuario usuarioSel = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,18 +25,37 @@ public class CadastroActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Intent intent = getIntent();
+        usuarioSel = (Usuario) intent.getSerializableExtra("usuarioSel");
+
+        if(usuarioSel != null){
+            edNome.setText(usuarioSel.getNome());
+        }else {
+            edNome.setText("");
+        }
+    }
+
     @OnClick(R.id.btn_cadastro_salvar)
     public void salvar(){
         //Retira o nome digitado no Edit Text
         String nome = edNome.getText().toString();
 
-        Usuario usuario = new Usuario();
+        if(usuarioSel == null){
+            usuarioSel = new Usuario();
+        }
 
         if(nome != null && !nome.isEmpty()){
-            usuario.setNome(nome);
+            usuarioSel.setNome(nome);
+            usuarioSel.setImagem(R.drawable.user1_image);
+
 
             Intent irParaLista = new Intent(CadastroActivity.this, AgendaList.class);
-            irParaLista.putExtra("usuario", usuario);
+            irParaLista.putExtra("usuario", usuarioSel);
+            usuarioSel = null;
             startActivity(irParaLista);
         } else {
             Toast.makeText(CadastroActivity.this, "Insira o nome !", Toast.LENGTH_SHORT).show();
